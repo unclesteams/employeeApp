@@ -4,12 +4,10 @@ import com.uncle.empapp.models.daos.User
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
-import org.springframework.beans.factory.FactoryBean
-import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 @Component
-class DatabaseConfiguration : FactoryBean<Session> {
+class DatabaseConfiguration {
 
     private var config : Configuration = Configuration()
     private lateinit var sessionFactory : SessionFactory;
@@ -24,15 +22,8 @@ class DatabaseConfiguration : FactoryBean<Session> {
         sessionFactory = config.buildSessionFactory()
     }
 
-    override fun getObject(): Session? {
+    fun getSession(): Session {
         return sessionFactory.openSession()
     }
 
-    override fun getObjectType(): Class<*>? {
-        return Session::class.java
-    }
-
-    override fun isSingleton() : Boolean {
-        return false
-    }
 }

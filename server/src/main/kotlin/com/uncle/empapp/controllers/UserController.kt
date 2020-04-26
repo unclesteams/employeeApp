@@ -1,5 +1,6 @@
 package com.uncle.empapp.controllers
 
+import com.uncle.empapp.configuration.DatabaseConfiguration
 import com.uncle.empapp.exceptions.UserAlreadyExists
 import com.uncle.empapp.exceptions.UserNotFound
 import com.uncle.empapp.models.daos.User
@@ -21,7 +22,7 @@ class UserController {
     private val userService: UserService? = null
 
     @Autowired
-    private val session: Session? = null
+    val dbConfig : DatabaseConfiguration? = null
 
     // create the logger
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -32,22 +33,18 @@ class UserController {
     }
 
     @GetMapping("/add")
-    fun addUser() {
-        val user: User = User(id = null, email="mail@mail.com", name = "Daniele", lastname =  "Battista")
-        if(session != null) {
-            val transaction: Transaction? = session.beginTransaction()
-            if(transaction != null){
-                try{
-                    session.save(user)
-                    transaction.commit()
-                } catch(ex: Exception) {
-                       logger.error("Exception ", ex)
-                        transaction.rollback()
-                } finally {
-                    if(session.isOpen)
-                     session.close()
-                }
-            }
+    fun addUser () {
+        val user : User = User(null, "mail@mail.com", "John", "McKenzie", "New_Created_User")
+        val session : Session = dbConfig!!.getSession()
+        val transaction : Transaction? = session.beginTransaction()
+        try {
+            session.save(user)
+            transaction!!.commit()
+        } catch (e : Exception) {
+            transaction!!.rollback()
+            logger.error("Unable to commit User", e);
+        } finally {
+            session.close()
         }
     }
 
