@@ -25,7 +25,7 @@ class UserController {
     var userService: UserService? = null
 
     @Autowired
-    val session : Session? = null
+    val dbConfig : DatabaseConfiguration? = null
 
     // create the logger
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -37,12 +37,18 @@ class UserController {
 
     @GetMapping("/add")
     fun addUser () {
-        val user : User = User(null, "mail@mail.com", "Daniele", "Battista", "nuovo Utente creato")
-        var transaction : Transaction? = session!!.beginTransaction()
-        session!!.save(user)
-        transaction!!.commit()
-        session!!.close()
-        transaction = null
+        val user : User = User(null, "mail@mail.com", "John", "McKenzie", "New_Created_User")
+        var session : Session = dbConfig!!.getSession()
+        var transaction : Transaction? = session.beginTransaction()
+        try {
+            session.save(user)
+            transaction!!.commit()
+        } catch (e : Exception) {
+            transaction!!.rollback()
+            logger.error("Unable to commit User", e);
+        } finally {
+            session.close()
+        }
     }
 
     @PostMapping("/")
