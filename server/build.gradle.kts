@@ -25,17 +25,30 @@ repositories {
 }
 
 dependencies {
-	implementation("de.codecentric:spring-boot-admin-server-ui:2.2.2")
-	implementation("de.codecentric:spring-boot-admin-server:2.2.2")
-	implementation("de.codecentric:spring-boot-admin-starter-client:2.2.2")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+	// swagger documentation
 	implementation("io.springfox:springfox-swagger2:2.9.2")
 	implementation("io.springfox:springfox-swagger-ui:2.9.2")
-	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+
+	// jpa and jdbc starter
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("com.h2database:h2")
+
+	// database
 	implementation("org.postgresql:postgresql:42.2.12")
+
+	// actuator and admin server for monitoring (TODO commented for now)
+	//implementation("org.springframework.boot:spring-boot-starter-actuator")
+	//implementation("de.codecentric:spring-boot-admin-server-ui:2.2.2")
+	//implementation("de.codecentric:spring-boot-admin-server:2.2.2")
+	//implementation("de.codecentric:spring-boot-admin-starter-client:2.2.2")
+
+	// security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+	// jwt
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+
+	// web starter
 	implementation("org.springframework.boot:spring-boot-starter-web") // default embedded container here
 	 {
 		 // exclude when you need to deploy the artifact to a real tomcat (few MB less)

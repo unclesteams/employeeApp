@@ -1,15 +1,11 @@
 package com.uncle.empapp.controllers
 
-import com.uncle.empapp.configuration.DatabaseConfiguration
 import com.uncle.empapp.exceptions.UserAlreadyExists
 import com.uncle.empapp.exceptions.UserNotFound
-import com.uncle.empapp.interceptor.UserControllerInterceptor
-import com.uncle.empapp.models.User
-import com.uncle.empapp.services.UserService
-import org.hibernate.Criteria
+import com.uncle.empapp.models.daos.User
+import com.uncle.empapp.services.interfaces.UserService
 import org.hibernate.Session
 import org.hibernate.Transaction
-import org.hibernate.criterion.Restrictions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,10 +18,10 @@ import org.springframework.web.bind.annotation.*
 class UserController {
 
     @Autowired
-    var userService: UserService? = null
+    private val userService: UserService? = null
 
     @Autowired
-    val session : Session? = null
+    private val session: Session? = null
 
     // create the logger
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -36,13 +32,23 @@ class UserController {
     }
 
     @GetMapping("/add")
-    fun addUser () {
-        val user : User = User(null, "mail@mail.com", "Daniele", "Battista", "nuovo Utente creato")
-        var transaction : Transaction? = session!!.beginTransaction()
-        session!!.save(user)
-        transaction!!.commit()
-        session!!.close()
-        transaction = null
+    fun addUser() {
+        val user: User = User(id = null, email="mail@mail.com", name = "Daniele", lastname =  "Battista")
+        if(session != null) {
+            val transaction: Transaction? = session.beginTransaction()
+            if(transaction != null){
+                try{
+                    session.save(user)
+                    transaction.commit()
+                } catch(ex: Exception) {
+                       logger.error("Exception ", ex)
+                        transaction.rollback()
+                } finally {
+                    if(session.isOpen)
+                     session.close()
+                }
+            }
+        }
     }
 
     @PostMapping("/")

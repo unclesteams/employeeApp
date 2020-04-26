@@ -1,14 +1,20 @@
-package com.uncle.empapp.services
+package com.uncle.empapp.services.impl
 
 import com.uncle.empapp.daos.UsersDao
 import com.uncle.empapp.exceptions.UserAlreadyExists
 import com.uncle.empapp.exceptions.UserNotFound
-import com.uncle.empapp.models.User
+import com.uncle.empapp.models.daos.User
+import com.uncle.empapp.services.interfaces.UserService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl : UserService {
+
+    // create the logger
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     @Autowired
     lateinit var repository: UsersDao
@@ -21,6 +27,7 @@ class UserServiceImpl : UserService {
         return repository.findAll().toList()
     }
 
+    @Throws(UserAlreadyExists::class)
     override fun addUser(user: User): Boolean {
         val oldUser: User? = getUser(user.email)
         if (oldUser == null) {
@@ -29,6 +36,7 @@ class UserServiceImpl : UserService {
         } else throw UserAlreadyExists()
     }
 
+    @Throws(UserNotFound::class)
     override fun updateUser(email: String, user: User): Boolean {
         val oldUser: User? = getUser(email)
         if(oldUser != null){
@@ -39,6 +47,7 @@ class UserServiceImpl : UserService {
             throw UserNotFound()
     }
 
+    @Throws(UserNotFound::class)
     override fun deleteUser(user: String): Boolean {
         val oldUser: User? = getUser(user)
         if (oldUser != null) {

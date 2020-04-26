@@ -1,6 +1,6 @@
-package com.uncle.empapp.services
+package com.uncle.empapp.services.interfaces
 
-import com.uncle.empapp.models.User
+import com.uncle.empapp.models.daos.User
 
 interface UserService {
     fun getUsers(): List<User?>?
