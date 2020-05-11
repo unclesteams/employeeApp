@@ -3,7 +3,7 @@ package com.uncle.empapp.services.impl
 import com.uncle.empapp.daos.UsersDao
 import com.uncle.empapp.exceptions.UserAlreadyExists
 import com.uncle.empapp.exceptions.UserNotFound
-import com.uncle.empapp.models.daos.User
+import com.uncle.empapp.models.daos.Employee
 import com.uncle.empapp.services.interfaces.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,29 +19,29 @@ class UserServiceImpl : UserService {
     @Autowired
     lateinit var repository: UsersDao
 
-    private fun getUser(email: String): User? {
+    private fun getUser(email: String): Employee? {
         return repository.findByEmail(email)
     }
 
-    override fun getUsers(): List<User?>? {
+    override fun getUsers(): List<Employee?>? {
         return repository.findAll().toList()
     }
 
     @Throws(UserAlreadyExists::class)
-    override fun addUser(user: User): Boolean {
-        val oldUser: User? = getUser(user.email)
-        if (oldUser == null) {
-            repository.save(user)
+    override fun addUser(employee: Employee): Boolean {
+        val oldEmployee: Employee? = getUser(employee.email)
+        if (oldEmployee == null) {
+            repository.save(employee)
             return true
         } else throw UserAlreadyExists()
     }
 
     @Throws(UserNotFound::class)
-    override fun updateUser(email: String, user: User): Boolean {
-        val oldUser: User? = getUser(email)
-        if(oldUser != null){
-            repository.deleteById(oldUser.id!!)
-            repository.save(user)
+    override fun updateUser(email: String, employee: Employee): Boolean {
+        val oldEmployee: Employee? = getUser(email)
+        if(oldEmployee != null){
+            repository.deleteById(oldEmployee.id!!)
+            repository.save(employee)
             return true
         } else
             throw UserNotFound()
@@ -49,12 +49,17 @@ class UserServiceImpl : UserService {
 
     @Throws(UserNotFound::class)
     override fun deleteUser(user: String): Boolean {
-        val oldUser: User? = getUser(user)
-        if (oldUser != null) {
-            repository.deleteById(oldUser.id!!)
+        val oldEmployee: Employee? = getUser(user)
+        if (oldEmployee != null) {
+            repository.deleteById(oldEmployee.id!!)
             return true
         } else
             throw UserNotFound()
+    }
+
+    override fun getDistinctName() {
+        val list : List<Employee>? = repository.findByOrderByName()
+        list!!.forEach {  println("Valore " + it.name ) }
     }
 
 }
