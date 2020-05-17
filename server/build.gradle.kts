@@ -36,9 +36,6 @@ dependencies {
 	// database
 	implementation("org.postgresql:postgresql:42.2.12")
 
-	// flyway
-	implementation("org.flywaydb:flyway-core")
-
 	// actuator and admin server for monitoring (TODO commented for now)
 	//implementation("org.springframework.boot:spring-boot-starter-actuator")
 	//implementation("de.codecentric:spring-boot-admin-server-ui:2.2.2")
