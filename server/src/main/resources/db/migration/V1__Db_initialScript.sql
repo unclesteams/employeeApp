@@ -1,3 +1,17 @@
+CREATE TABLE ea_employee (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(250) NOT NULL,
+  lastname VARCHAR(250) NOT NULL,
+  email VARCHAR(250) UNIQUE NOT NULL,
+  description VARCHAR(250)
+);
+
+CREATE TABLE passwords (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(250) UNIQUE NOT NULL,
+  password VARCHAR(500) NOT NULL
+);
+
 INSERT INTO ea_employee (name, lastname, email) VALUES
   ('Lokesh', 'Gupta', 'abc@gmail.com'),
   ('Deja', 'Vu', 'xyz@email.com'),
