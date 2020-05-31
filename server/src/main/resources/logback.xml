@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<configuration>
+<configuration debug="true">
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] [%C] [%t] [%L] [%-5p] %m%n</pattern>
@@ -9,7 +9,7 @@
         <encoder>
             <pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] [%C] [%t] [%L] [%-5p] %m%n</pattern>
         </encoder>
-        <File>./log/uncles.log</File>
+        <File>${EMPLOYEE_APP_LOG_PATH}/uncles.log</File>
     </appender>
     <logger name="com.uncle" level="DEBUG" additivity="false">
         <appender-ref ref = "STDOUT"/>

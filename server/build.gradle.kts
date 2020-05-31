@@ -36,6 +36,9 @@ dependencies {
 	// database
 	implementation("org.postgresql:postgresql:42.2.12")
 
+	// flyway
+	implementation("org.flywaydb:flyway-core")
+
 	// actuator and admin server for monitoring (TODO commented for now)
 	//implementation("org.springframework.boot:spring-boot-starter-actuator")
 	//implementation("de.codecentric:spring-boot-admin-server-ui:2.2.2")
@@ -61,8 +64,33 @@ dependencies {
 }
 
 tasks.withType<Test> {
+	systemProperties = systemProperties + mapOf("EMPLOYEE_APP_LOG_PATH" to "./log")
 	useJUnitPlatform()
 }
+
+tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
+	@Suppress("UNCHECKED_CAST") // note: Properties extends Hashtable<Object,Object>
+	val args: Map<String, Any> = System.getProperties() as Map<String, Any>
+	 // println("System properties for bootRun task: ${systemProperties}")
+	 // println("Env properties read from command line: ${args}")
+	// read all properties provided to the jvm and make sure the LOG_PATH dir is set (used by logback.xml)
+	systemProperties = systemProperties + mapOf("EMPLOYEE_APP_LOG_PATH" to "./log") + args
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootWar> {
+	baseName = "uncles"
+	archiveName = "uncles.war"
+
+	// exclude these files from the .war
+	sourceSets {
+		main {
+			resources {
+				exclude("**/logback.xml", "**/data.sql", "**/schema.sql")
+			}
+		}
+	}
+}
+
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
