@@ -1,5 +1,9 @@
 export class User {
-  id: string;
-  name: string;
-  email: string;
+
+  public id: string;
+  public name: string;
+  public email: string;
+  private token: string;
+  private tokenExpirationDate: Date;
+  
 }
