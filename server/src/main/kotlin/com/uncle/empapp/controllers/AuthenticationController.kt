@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 
 @RestController
@@ -50,9 +51,14 @@ class AuthenticationController {
         logger.info("Login for user ${body}")
         authenticate(body.email, body.password)
 
-        val details: UserDetails = userDetailsService!!.loadUserByUsername(body.email)
-        val token: String = jwtTokenUtil!!.generateToken(details)
-        return UserAuthenticated(body.email, token)
+        if(jwtTokenUtil != null && userDetailsService != null){
+            val details: UserDetails = userDetailsService.loadUserByUsername(body.email)
+            val token: String = jwtTokenUtil.generateToken(details)
+            val expirationDate: Date = jwtTokenUtil.getExpirationDateFromToken(token)
+            return UserAuthenticated(body.email, token, expirationDate)
+        } else {
+            throw Exception("internal error")
+        }
 
     }
 }
