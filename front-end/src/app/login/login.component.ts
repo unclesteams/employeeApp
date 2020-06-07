@@ -25,9 +25,9 @@ export class LoginComponent implements OnInit {
     const password = form.value.password
     this.loginService.signIn(email,password).subscribe(
     response =>{
-      console.log(response)
       this.error = null
       this.isLoading = false
+      this.loginService.setSession(response)
       this.router.navigate(['/dashboard'])
     },
     error => {
