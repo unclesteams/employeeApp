@@ -3,6 +3,8 @@ package com.uncle.empapp.controllers
 import com.uncle.empapp.exceptions.WrongCredentials
 import com.uncle.empapp.jwt.JwtTokenUtil
 import com.uncle.empapp.models.UserAuthenticated
+import com.uncle.empapp.models.ValidToken
+import com.uncle.empapp.models.ValidateJwtToken
 import com.uncle.empapp.models.daos.AuthEntry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -51,7 +53,7 @@ class AuthenticationController {
         logger.info("Login for user ${body}")
         authenticate(body.email, body.password)
 
-        if(jwtTokenUtil != null && userDetailsService != null){
+        if (jwtTokenUtil != null && userDetailsService != null) {
             val details: UserDetails = userDetailsService.loadUserByUsername(body.email)
             val token: String = jwtTokenUtil.generateToken(details)
             val expirationDate: Date = jwtTokenUtil.getExpirationDateFromToken(token)
@@ -60,5 +62,22 @@ class AuthenticationController {
             throw Exception("internal error")
         }
 
+    }
+
+    @PostMapping("/isTokenValid")
+    fun validateJwt(@RequestBody body: ValidateJwtToken): ValidToken? {
+        if (jwtTokenUtil != null && userDetailsService != null) {
+            try {
+                // check this email exists in db (exception is thrown on error)
+                userDetailsService.loadUserByUsername(body.email)
+                val isValid: Boolean = jwtTokenUtil.validateToken(body.jwt) &&
+                        jwtTokenUtil.getUsernameFromToken(body.jwt).equals(body.email)
+                return ValidToken(isValid)
+            } catch (ex: Throwable) {
+                return ValidToken(valid = false)
+            }
+        } else {
+            throw Exception("internal error")
+        }
     }
 }
