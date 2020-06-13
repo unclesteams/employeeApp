@@ -67,6 +67,7 @@ class AuthenticationController {
     @PostMapping("/isTokenValid")
     fun validateJwt(@RequestBody body: ValidateJwtToken): ValidToken? {
         if (jwtTokenUtil != null && userDetailsService != null) {
+            logger.info("Request jwt token validation ${body}")
             try {
                 // check this email exists in db (exception is thrown on error)
                 userDetailsService.loadUserByUsername(body.email)

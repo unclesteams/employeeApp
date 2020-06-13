@@ -4,6 +4,8 @@ import { LoginComponent } from './login/login.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {LoginService} from './login/login.service';
+import { map} from 'rxjs/operators';
+import {from} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +17,24 @@ export class CanActivateDashboard implements CanActivate {
     state: RouterStateSnapshot
   ){
     if (this.loginService.isLoggedIn()) {
-      return true;
+      const jwtLocal = this.loginService.getAuthToken();
+      const emailLocal = this.loginService.getEmail();
+      return from(this.loginService.isValidToken(emailLocal, jwtLocal).pipe(
+      map(
+        response => {
+          if(!response.valid) {
+            this.router.navigate(['/login'], {
+              queryParams: {
+                return: state.url
+              }
+            });
+            this.loginService.clearSession();
+          }
+          return response.valid;
+        })
+      ).toPromise());
     } else {
+      this.loginService.logout();
       this.router.navigate(['/login'], {
         queryParams: {
           return: state.url
